@@ -5,8 +5,6 @@ import 'firebase/compat/firestore';
 import 'firebase/compat/auth';
 import { getDatabase, ref, set, onValue, update } from "firebase/database";
 
-import pjs from './playerjsloader';
-
 export default {
   data() {
     return {
@@ -90,11 +88,9 @@ export default {
       });
     },
     initializePlayer(url){
-      pjs.then(() => {
         this.player = new Playerjs({ // Використання this.player замість player
           id: 'player',
           file: url,
-        });
       });
     },
     signInEmail(){
