@@ -99,14 +99,14 @@ function Room(){
 
     const loadPlayerScript = () => {
         return new Promise((resolve, reject) => {
-          const checkscript = document.querySelector('script[src="./libs/playerjs.js"]');
+          const checkscript = document.querySelector('script[src="../libs/playerjs.js"]');
           if (checkscript) {
             // Script is already loaded, resolve immediately
             resolve();
             console.log("вже є");
           } else {
             const script = document.createElement('script');
-            script.src = './libs/playerjs.js';
+            script.src = '../libs/playerjs.js';
             script.type = 'text/javascript';
             script.onerror = () => reject(new Error('Failed to load the script'));
             document.body.appendChild(script);
