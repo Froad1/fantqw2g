@@ -54,3 +54,8 @@
         width: 80%;
     }
   }
+@media only screen and (max-width: 700) {
+    .player_container{
+        padding: 5rem 0;
+    }
+  }

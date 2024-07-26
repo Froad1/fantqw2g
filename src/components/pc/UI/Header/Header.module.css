@@ -58,3 +58,10 @@ header{
     padding: 4rem 2rem;
     justify-content: center;
 }
+
+
+@media only screen and (max-width: 700) {
+    header{
+        padding: 2rem 1rem;
+    }
+  }
