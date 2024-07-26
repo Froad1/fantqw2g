@@ -99,7 +99,7 @@ function Room(){
 
     const loadPlayerScript = () => {
         return new Promise((resolve, reject) => {
-          const checkscript = document.querySelector('script[src="/libs/playerjs.js"]');
+          const checkscript = document.querySelector('script[src="./libs/playerjs.js"]');
           if (checkscript) {
             // Script is already loaded, resolve immediately
             resolve();
