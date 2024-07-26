@@ -1,0 +1,22 @@
+.App{
+  width: 100%;
+  min-height: 100vh;
+  background: var(--background-color-gradient);
+  background-size: 200% 200%;
+  color: var(--text-color);
+  fill: var(--text-color);
+  transition: 0.3s ease-in-out all;
+  animation: gradient-move 15s ease-in-out infinite;
+}
+
+@keyframes gradient-move {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
+}

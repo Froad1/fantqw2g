@@ -1,0 +1,53 @@
+@font-face {
+  font-family: eUkraineRegular;
+  src: url(/fonts/e-Ukraine/e-Ukraine-Regular.otf);
+}
+@font-face {
+  font-family: eUkraineThin;
+  src: url(/fonts/e-Ukraine/e-Ukraine-Thin.otf);
+}
+@font-face {
+  font-family: eUkraineLight;
+  src: url(/fonts/e-Ukraine/e-Ukraine-Light.otf);
+}
+@font-face {
+  font-family: eUkraineUltraLight;
+  src: url(/fonts/e-Ukraine/e-Ukraine-UltraLight.otf);
+}
+@font-face {
+  font-family: eUkraineBold;
+  src: url(/fonts/e-Ukraine/e-Ukraine-Bold.otf);
+}
+@font-face {
+  font-family: eUkraineMedium;
+  src: url(/fonts/e-Ukraine/e-Ukraine-Medium.otf);
+}
+
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: eUkraineRegular;
+}
+
+:root{
+  --background-color: #333333;
+  --text-color: #E5E5EA;
+  --text-color-glow: #e5e5ea81;
+  --background-color-gradient: radial-gradient(at top left, transparent 9%, hsl(202deg 23.47% 6.24%) 70.5%), radial-gradient(at bottom left, transparent 10%, hsla(213, 77%, 14%, 1) 67.5%), linear-gradient(45deg, hsla(213, 77%, 14%, 1) 0%, hsla(202, 27%, 45%, 1) 100%);
+
+}
+
+[data-theme="dark"]{
+  --text-color: #E5E5EA;
+  --text-color-glow: #e5e5ea81;
+  --background-color: hsla(213, 77%, 14%, 1);
+  --background-color-gradient: radial-gradient(at top left, transparent 9%, hsl(202deg 23.47% 6.24%) 70.5%), radial-gradient(at bottom left, transparent 10%, hsla(213, 77%, 14%, 1) 67.5%), linear-gradient(45deg, hsla(213, 77%, 14%, 1) 0%, hsla(202, 27%, 45%, 1) 100%);
+}
+
+[data-theme="light"]{
+  --background-color: #E5E5EA;
+  --text-color: #333333;
+  --text-color-glow: #33333344;
+  --background-color-gradient: radial-gradient(at top left, transparent 9%, hsl(203, 94%, 80%) 70.5%), radial-gradient(at bottom left, transparent 10%, rgb(25, 112, 219) 67.5%), linear-gradient(45deg, rgb(25, 112, 219) 0%, hsla(202, 27%, 45%, 1) 100%);
+}

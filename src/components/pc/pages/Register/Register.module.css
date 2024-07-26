@@ -1,0 +1,91 @@
+.register_container{
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8rem 4rem 7rem;
+}
+
+.register_form{
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 3rem;
+    padding: 6rem 3rem;
+    border: solid 3px var(--text-color);
+    border-radius: 16px;
+}
+
+.inputs_box{
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.inputs_box div input{
+    width: 100%;
+}
+.inputs_box div{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.password_box{
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.password_box > input {
+    width: 100%;
+}
+
+.password_box > svg{
+    position: absolute;
+    right: 1rem;
+    cursor: pointer;
+}
+.password_box > svg:hover{
+    transform: scale(1.05);
+}
+
+.buttons_box{
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.buttons_box > button{
+    display: flex;
+    gap: 0.5rem;
+    flex-direction: row;
+}
+
+.buttons_box > button > span > svg{
+    fill: var(--text-color);
+    height: 2rem;
+    width: 2rem;
+}
+
+.error{
+    color: brown;
+    font-size: 0.8rem;
+    font-family: eUkraineThin;
+}
+
+
+
+@media only screen and (min-width: 1200px) {
+    .register_form{
+        width: 20%;
+    }
+}

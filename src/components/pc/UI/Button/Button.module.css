@@ -1,0 +1,27 @@
+.btn{
+    display: flex;
+    padding: 0.5rem 1.5rem;
+    border: solid 2px var(--text-color);
+    border-radius: 10px;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+}
+
+.primary_btn{
+    background-color: var(--text-color);
+    color: var(--background-color);
+}
+.secondary_btn{
+    background: transparent;
+    color: var(--text-color);
+}
+
+.primary_btn > svg{
+    fill: var(--background-color);
+}
+
+.secondary_btn > svg{
+    fill: var(--text-color);
+}

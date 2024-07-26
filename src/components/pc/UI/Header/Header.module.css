@@ -1,0 +1,60 @@
+header{
+    position: absolute;
+    display: flex;
+    width: 100%;
+    padding: 2rem 4rem;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 23px;
+    font-family: 'eUkraineThin';
+}
+
+.logo{
+    font-family: eUkraineThin;
+    color: var(--text-color);
+    text-decoration: none;
+    transition: all 0.2s ease-in-out;
+}
+
+.logo:hover{
+    transform: scale(1.05);
+}
+
+.buttons_autorization{
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.account_box{
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    justify-content: center;
+    gap: 1rem;
+    position: relative;
+    cursor: pointer;
+}
+
+.user_photo{
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.account_dropdown{
+    position: absolute;
+    top: 3rem;
+    z-index: 100;
+    display: flex;
+    max-width: 200%;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    gap: 1rem;
+    border: solid 2px var(--text-color);
+    border-radius: 16px;
+    padding: 4rem 2rem;
+    justify-content: center;
+}

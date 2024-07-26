@@ -1,0 +1,31 @@
+.inpt{
+    display: flex;
+    padding: 0.5rem 1.5rem;
+    border: solid 2px var(--text-color);
+    border-radius: 10px;
+    transition: all 0.2s ease-in-out;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+}
+
+.primary_inpt{
+    background-color: var(--text-color);
+    color: var(--background-color);
+}
+.secondary_inpt{
+    background: transparent;
+    color: var(--text-color);
+}
+
+.primary_inpt > svg{
+    fill: var(--background-color);
+}
+
+.secondary_inpt > svg{
+    fill: var(--text-color);
+}
+
+.btn:hover{
+    transform: scale(1.1);
+}
