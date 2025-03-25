@@ -39,13 +39,19 @@ jobs:
         run: npm install
       - name: Build
         run: npm run build && cp ./dist/index.html ./dist/404.html
+      - name: Debug Build Output
+        run: ls -la ./dist
       - name: Setup Pages
         uses: actions/configure-pages@v3
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          # Upload dist repository
+          name: github-pages  # Додано ім'я
           path: './dist'
+      
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v2
+        with:
+          artifact_name: github-pages  # Вказати ім'я артефакту
+        
