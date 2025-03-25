@@ -1,0 +1,14 @@
+{
+    "main":{
+        "main_description": "Watch Together, Even If You're Far Away",
+        "start_button": "Start"
+    },
+    "settings":{
+        "light_theme": "Light",
+        "dark_theme": "Dark"
+    },
+    "room":{
+        "password": "Enter Password",
+        "checkpassword": "Check"
+    }
+}

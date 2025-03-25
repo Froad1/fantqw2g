@@ -1,0 +1,10 @@
+{
+    "main":{
+        "main_description": "Dívejte se spolu, i když jste daleko",
+        "start_button": "Začít"
+    },
+    "settings":{
+        "light_theme": "Světlé",
+        "dark_theme": "Tmavé"
+    }
+}

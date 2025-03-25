@@ -8,6 +8,8 @@ const Button = ({primary, children, ...options}) =>{
         <m.button 
             type='button' {...options} className={primary ? classes.primary_btn + ` ${classes.btn}` : classes.secondary_btn + ` ${classes.btn}`}
             whileHover={animationConfig.hover}
+            layout
+            transition={animationConfig.move}
         >
             {children}
         </m.button>

@@ -13,6 +13,9 @@ import { AnimatePresence, motion as m, spring } from 'framer-motion'
 
 import animationConfig from '/public/configs/animationConfig';
 
+import {useTranslation } from 'react-i18next';
+import '../../../../assets/locales/config'
+
 function Room(){
     const { roomId } = useParams();
     const firebaseConfig = {
@@ -38,6 +41,7 @@ function Room(){
     const [showSettings, setShowSettings] = useState(false);
     const [currentUrl, setСurrentUrl] = useState(null);
     const [newUrl, setNewUrl] = useState('');
+    const {t} = useTranslation();
 
     useEffect(()=>{
         getInfo()
@@ -66,7 +70,7 @@ function Room(){
     const getInfo = () =>{
         roomInfoRef.get().then((doc)=>{
             if(doc.exists){
-                setRoomInfo(doc.data());
+                setRoomInfo(doc.data());                
                 if(doc.data().pass){
                     setLock(true)
                     const cachedRoomData = localStorage.getItem(`room-${roomId}`);
@@ -81,6 +85,7 @@ function Room(){
                         }
                     } 
                 } else {
+                    getData()
                     setLock(false)
                 }
             }
@@ -105,6 +110,8 @@ function Room(){
             resolve();
             console.log("вже є");
           } else {
+            console.log("нема");
+            
             const script = document.createElement('script');
             script.src = '../libs/playerjs.js';
             script.type = 'text/javascript';
@@ -148,11 +155,11 @@ function Room(){
                     timing: time,
                 })
             });
-            // playerElement.addEventListener("time", () => {
-            //     // console.log('pause');
-            //     var time = playerRef.current.api('time');
-            //     console.log(time);
-            // });
+            playerElement.addEventListener("time", () => {
+                // console.log('pause');
+                var time = playerRef.current.api('time');
+                console.log(time);
+            });
         }
     }
 
@@ -160,7 +167,10 @@ function Room(){
         roomRef.onSnapshot((doc) =>{
             var data = doc.data();
             data.play ? window.pljssglobal[0].api('play') : window.pljssglobal[0].api('pause'); 
-            playerRef.current.api('seek', data.timing);
+            var time = playerRef.current.api('time');
+            if(time - 1 >= data.timing || time + 1 <= data.timing){
+                playerRef.current.api('seek', data.timing);
+            }
             console.log(currentUrl, data.url);
             if(currentUrl && data.url != currentUrl){
                 // window.location.reload();
@@ -203,9 +213,9 @@ function Room(){
         >
             {lock ? (
                 <>
-                    <div>ХУЙ</div>
+                    <div>{t("room.password")}</div>
                     <Input value={passInput} onChange={e => setPassInput(e.target.value)} className={classes.secondary_inpt + ` ${classes.inpt}`}/>
-                    <Button onClick={() => checkPass()} primary={false}>XUI</Button> 
+                    <Button onClick={() => checkPass()} primary={false}>{t("room.checkpassword")}</Button> 
                 </>
             ) : (
                 <>

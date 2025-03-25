@@ -1,0 +1,14 @@
+{
+    "main":{
+        "main_description": "Дивіться Разом, Навіть Якщо Ви Далеко",
+        "start_button": "Почати"
+    },
+    "settings":{
+        "light_theme": "Світла",
+        "dark_theme": "Темна"
+    },
+    "room":{
+        "password": "Введіть пароль",
+        "checkpassword": "Перевірити "
+    }
+}
