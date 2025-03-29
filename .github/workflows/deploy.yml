@@ -35,6 +35,10 @@ jobs:
 
       - name: Build
         run: npm run build && cp ./dist/index.html ./dist/404.html
+        
+      - name: Cleanup unnecessary files
+        run: rm -rf dist/node_modules dist/*.map
+
 
       - name: Setup Pages
         uses: actions/configure-pages@v4  # Оновлено до v4
