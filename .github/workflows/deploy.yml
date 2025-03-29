@@ -1,8 +1,9 @@
-name: Deploy static content to Pages
+name: Deploy static content to GitHub Pages
 
 on:
   push:
-    branches: ['main']
+    branches:
+      - main
   workflow_dispatch:
 
 permissions:
@@ -20,35 +21,36 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4  # Оновлено до v4
 
-      - name: Set up Node
-        uses: actions/setup-node@v4  # Оновлено до v4
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: 18
-          cache: 'npm'
+          cache: npm
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
-      - name: Build
-        run: npm run build && cp ./dist/index.html ./dist/404.html
-        
+      - name: Build project
+        run: |
+          npm run build
+          cp ./dist/index.html ./dist/404.html  # Фікс для багатосторінковості SPA
+
       - name: Cleanup unnecessary files
         run: rm -rf dist/node_modules dist/*.map
 
+      - name: Setup GitHub Pages
+        uses: actions/configure-pages@v4
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v4  # Оновлено до v4
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4 # Оновлено до v2
+      - name: Upload build artifacts
+        uses: actions/upload-pages-artifact@v2
         with:
-          name: github-pages  # Додано назву артефакту
           path: './dist'
 
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4  # Оновлено до v2
+        uses: actions/deploy-pages@v4
