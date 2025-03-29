@@ -6,10 +6,10 @@ import Main from './components/pc/pages/Main/Main'
 import Header from './components/pc/UI/Header/Header'
 import Login from './components/pc/pages/Login/Login'
 import Register from './components/pc/pages/Register/Register'
+import Home from './components/pc/pages/Home/Home'
 
 import { motion as m } from 'framer-motion'
 import animationConfig from '/public/configs/animationConfig';
-
 function App() {
   const [isLight, setIsLight] = useState(false)
 
@@ -22,6 +22,7 @@ function App() {
           <Route path='/room/:roomId' element={<Room/>}/>
           <Route path='/login' element={<Login/>}/>
           <Route path='/register' element={<Register/>}/>
+          <Route path='/home' element={<Home/>}/>
         </Routes>
       </BrowserRouter>
     </m.div>

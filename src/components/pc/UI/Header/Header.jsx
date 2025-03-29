@@ -140,17 +140,17 @@ const Header = () =>{
                                     <Button primary={false} onClick={()=>{setLanguageDropdown(!languageDropdown)}}>{
                                         selectedLanguage == "uk" ? (
                                             <>
-                                                Мова
+                                                Language
                                                 <Flag code='ua' className={classes.flag}></Flag>
                                             </>
                                         ) : selectedLanguage == "cz" ? (
                                             <>
-                                                Мова
+                                                Language
                                                 <Flag code='cz' className={classes.flag}></Flag>
                                             </>
                                         ) : (
                                             <>
-                                                Мова
+                                                Language
                                                 <Flag code='gb' className={classes.flag}></Flag>
 
                                             </>

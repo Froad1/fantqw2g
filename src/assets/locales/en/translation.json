@@ -10,5 +10,17 @@
     "room":{
         "password": "Enter Password",
         "checkpassword": "Check"
+    },
+    "home":{
+        "createroom":{
+            "input_url": "Enter URL",
+            "checkbox_pass": "Password",
+            "input_pass": "Ender Password",
+            "button": "Create Room"
+        },
+        "connectroom":{
+            "input_id": "Enter Room ID",
+            "button": "Connect"
+        }
     }
 }

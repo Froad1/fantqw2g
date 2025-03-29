@@ -10,5 +10,17 @@
     "room":{
         "password": "Введіть пароль",
         "checkpassword": "Перевірити "
+    },
+    "home":{
+        "createroom":{
+            "input_url": "Введіть посилання",
+            "checkbox_pass": "Пароль",
+            "input_pass": "Введіть пароль",
+            "button": "Створити кімнату"
+        },
+        "connectroom":{
+            "input_id": "Введіть ID кімнати",
+            "button": "Приєднатися"
+        }
     }
 }
