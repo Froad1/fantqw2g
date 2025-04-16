@@ -1,8 +1,6 @@
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/firestore';
-import 'firebase/compat/auth';
-import 'firebase/database'
-
+import { auth, db } from '../../../../assets/firebase';
+import { collection, doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
+import { GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword, updateProfile} from 'firebase/auth';
 
 import Button from '../../UI/Button/Button';
 import Input from '../../UI/Input/Input';
@@ -14,8 +12,10 @@ import animationConfig from '/public/configs/animationConfig';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-function Register() {
+import {useTranslation } from 'react-i18next';
 
+function Register() {
+    const {t} = useTranslation();
     const [login, setLogin] = useState('');
     const [loginError, setLoginError] = useState(null);
     const [password, setPassword] = useState('');
@@ -23,49 +23,33 @@ function Register() {
     const [email, setEmail] = useState('');
     const [emailError, setEmailError] = useState(null);
     const [seePassword, setSeePassword] = useState(false);
-    const [auth, setAuth] = useState(false);
+    const [loggined, setLoggined] = useState(false);
     const navigate = useNavigate();
 
-    const firebaseConfig = {
-        apiKey: "AIzaSyBPqdbyKPq-Ay5J_a2YGwMF-i-m074sBvo",
-        authDomain: "fantqw2gv3.firebaseapp.com",
-        projectId: "fantqw2gv3",
-        storageBucket: "fantqw2gv3.appspot.com",
-        messagingSenderId: "205303446139",
-        appId: "1:205303446139:web:46fcfa5c40e03d454b00de",
-        measurementId: "G-38TSV9FRNG"
-    };
-    
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-
-
     useEffect(() => {
-        firebase.auth().onAuthStateChanged((user) =>{
-            user && setAuth(true);
-            console.log(user)
+        auth.onAuthStateChanged((user) =>{
+            user && setLoggined(true);
         })
     },[])
 
     useEffect(()=>{
-        if(auth){
+        if(loggined){
             navigate('/')
         }
-    },[auth])
+    },[loggined])
 
 
 
     const signUpGoogle = () =>{
-        const authProvider = new firebase.auth.GoogleAuthProvider();
-        firebase.auth().signInWithPopup(authProvider)
+        const authProvider = GoogleAuthProvider();
+        signInWithPopup(auth, authProvider)
           .then((userCredential) => {
             setAuth(true)
           })
           .catch((error) => {
             const errorCode = error.code;
             const errorMessage = error.message;
-            console.log(errorCode, errorMessage)
+            console.error(errorCode, errorMessage)
           });
     }
 
@@ -75,29 +59,36 @@ function Register() {
         setEmailError('')
         setPasswordError('')
 
-        const usernamesRef = db.collection('usernames').doc('allusernames')
-        const idUsernamesRef = db.collection('usernames').doc('idUsernames')
-        const usernamesDoc = await usernamesRef.get()
+        if(!login || login == '') {setLoginError(t('register.errors.username_empty')); return;}
+        if(login && login != '' && login.length < 3) {setLoginError(t('register.errors.username_invalid')); return;}
+        if(!email || email == '') {setEmailError(t('register.errors.email_empty')); return;}
+        if(!email.includes('@')) {setEmailError(t('register.errors.email_invalid')); return;}
+        if(!password || password == '') {setPasswordError(t('register.errors.password_empty')); return;}
+        if(password.length < 6) {setPasswordError(t('register.errors.password_invalid')); return;}
+
+        const usernamesRef = doc(collection(db, 'usernames'), 'allusernames')
+        const idUsernamesRef = doc(collection(db, 'usernames'), 'idUsernames')
+        const usernamesDoc = await getDoc(usernamesRef)
         const usernames = usernamesDoc.data().allusername
         const loginTaken = usernames.includes(login)
 
-        console.log(loginTaken);
+        if(loginTaken) {setLoginError(t('register.errors.username_taken')); return;}
 
-        if(login && login != '' && email && email != '' && email.includes('@') && password && password != '' && password.length >= 6 && !loginTaken){
-            firebase.auth().createUserWithEmailAndPassword(email, password)
-            .then(function(result) {
-                return result.user.updateProfile({
-                  displayName: login
+
+            createUserWithEmailAndPassword(auth, email, password)
+            .then((result) => {
+                return updateProfile(result.user, {
+                    displayName: login
                 })
             })
             .then(() => {
                 // Update the allusername field in the usernames collection
-                usernamesRef.update({
+                updateDoc(usernamesRef, {
                     allusername: [...usernames, login]
                 })
 
                 // Add the user to the idUsernames collection
-                idUsernamesRef.set({
+                setDoc(idUsernamesRef, {
                     [login]: {
                         email: email
                     }
@@ -106,19 +97,9 @@ function Register() {
             .catch((error) => {
                 const errorCode = error.code;
                 const errorMessage = error.message;
-                if(errorCode == "auth/invalid-credential"){
-                    setLoginError('Емейл або пароль не правильний')
-                }
-                console.log(errorCode, "BOBOBOB", errorMessage);
+                setLoginError('something went wrong')
+                console.error(errorCode, errorMessage);
             });
-        } else {
-            if(!login || login == '') setLoginError('Введіть логін');
-            if(loginTaken) setLoginError('Логін зайнятий');
-            if(!email || email == '') setEmailError('Введіть емейл');
-            if(!email.includes('@')) setEmailError('Невірно введено емейл')
-            if(!password || password == '') setPasswordError('Введіть пароль');
-            if(password.length < 6) setPasswordError('Пароль має містити 6 або більше символів');
-        }
     }
 
     return (  
@@ -132,16 +113,16 @@ function Register() {
             <form className={classes.register_form}>
                 <div className={classes.inputs_box}>
                     <div>
-                        <Input placeholder="Логін" value={login} onChange={(e)=>{setLogin(e.target.value)}}/>
+                        <Input placeholder={t('register.username_input')} value={login} onChange={(e)=>{setLogin(e.target.value)}}/>
                         <span className={classes.error}>{loginError}</span>
                     </div>
                     <div>
-                        <Input placeholder="Емейл" type="email" value={email} onChange={(e)=>{setEmail(e.target.value)}}/>
+                        <Input placeholder={t('register.email_input')} type="email" value={email} onChange={(e)=>{setEmail(e.target.value)}}/>
                         <span className={classes.error}>{emailError}</span>
                     </div>
                     <div>
                         <div className={classes.password_box}>
-                            <Input value={password} onChange={(e)=>{setPassword(e.target.value)}} placeholder="Пароль" type={seePassword ? "text" : "password"}/>
+                            <Input value={password} onChange={(e)=>{setPassword(e.target.value)}} placeholder={t('register.password_input')} type={seePassword ? "text" : "password"}/>
                             { seePassword ? (
                                     <svg onClick={()=>{setSeePassword(!seePassword)}} xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="m644-428-58-58q9-47-27-88t-93-32l-58-58q17-8 34.5-12t37.5-4q75 0 127.5 52.5T660-500q0 20-4 37.5T644-428Zm128 126-58-56q38-29 67.5-63.5T832-500q-50-101-143.5-160.5T480-720q-29 0-57 4t-55 12l-62-62q41-17 84-25.5t90-8.5q151 0 269 83.5T920-500q-23 59-60.5 109.5T772-302Zm20 246L624-222q-35 11-70.5 16.5T480-200q-151 0-269-83.5T40-500q21-53 53-98.5t73-81.5L56-792l56-56 736 736-56 56ZM222-624q-29 26-53 57t-41 67q50 101 143.5 160.5T480-280q20 0 39-2.5t39-5.5l-36-38q-11 3-21 4.5t-21 1.5q-75 0-127.5-52.5T300-500q0-11 1.5-21t4.5-21l-84-82Zm319 93Zm-151 75Z"/></svg>
                                 ):(
@@ -153,7 +134,7 @@ function Register() {
                     </div>
                 </div>
                 <div className={classes.buttons_box}>
-                    <Button onClick={signUpEmail} primary={true}>Зареєструватися</Button>
+                    <Button onClick={signUpEmail} primary={true}>{t('register.register_btn')}</Button>
                     <Button onClick={signUpGoogle} primary={false}> 
                         <span>
                         <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="100" height="100" viewBox="0 0 50 50">

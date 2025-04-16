@@ -3,13 +3,24 @@
         "main_description": "Дивіться Разом, Навіть Якщо Ви Далеко",
         "start_button": "Почати"
     },
-    "settings":{
-        "light_theme": "Світла",
-        "dark_theme": "Темна"
-    },
-    "room":{
-        "password": "Введіть пароль",
-        "checkpassword": "Перевірити "
+    "room": {
+        "private": {
+            "title": "Ця кімната приватна.",
+            "password_error": "Невірний пароль",
+            "password_inpt": "Пароль",
+            "check_btn": "Перевірити"
+        },
+        "room_title": "Кімната: ",
+        "settings": "Налаштування",
+        "exit_btn": "Вийти з кімнати",
+        "delete_btn": "Видалити кімнату",
+        "delete_confirm": {
+            "title": "Ви впевнені, що хочете видалити цю кімнату?",
+            "confirm_btn": "Видалити",
+            "cancel_btn": "Скасувати"
+        },
+        "change_url_btn": "Змінити URL",
+        "change_url_input": "Введіть новий URL"
     },
     "home":{
         "createroom":{
@@ -22,5 +33,45 @@
             "input_id": "Введіть ID кімнати",
             "button": "Приєднатися"
         }
+    },
+    "header":{
+        "account":{
+            "signout": "Вийти"
+        },
+        "settings":{
+            "light_theme": "Світла",
+            "dark_theme": "Темна"
+        },
+        "login_btn":{
+            "login": "Увійти",
+            "register": "Реєстрація"
+        }
+    },
+    "login": {
+        "errors": {
+            "email": "Невірний email або логін",
+            "password": "Невірний пароль",
+            "email_pass": "Невірний email або пароль",
+            "email_empty": "Email або логін не може бути порожнім",
+            "password_empty": "Пароль не може бути порожнім"
+        },
+        "email_input": "Email або логін",
+        "password_input": "Пароль",
+        "login_btn": "Увійти"
+    },
+    "register": {
+        "errors": {
+            "username_empty": "Логін не може бути порожнім",
+            "username_invalid": "Логін має містити від 3 до 20 символів і може складатися лише з літер, цифр та підкреслень",
+            "username_taken": "Логін вже зайнятий",
+            "email_empty": "Email не може бути порожнім",
+            "email_invalid": "Email має бути дійсним",
+            "password_empty": "Пароль не може бути порожнім",
+            "password_invalid": "Пароль має містити щонайменше 6 символів"
+        },
+        "username_input": "Логін",
+        "email_input": "Email",
+        "password_input": "Пароль",
+        "register_btn": "Зареєструватися"
     }
 }

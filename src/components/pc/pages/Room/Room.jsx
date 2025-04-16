@@ -2,6 +2,11 @@ import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';
 import 'firebase/compat/auth';
 import 'firebase/database'
+import { useNavigate } from 'react-router-dom';
+import { auth, db } from '../../../../assets/firebase';
+import { collection, doc, getDoc, setDoc, updateDoc, arrayUnion, onSnapshot, arrayRemove } from 'firebase/firestore';
+
+
 import { useParams } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
 import Input from '../../UI/Input/Input';
@@ -13,120 +18,85 @@ import { AnimatePresence, motion as m, spring } from 'framer-motion'
 
 import animationConfig from '/public/configs/animationConfig';
 
-import {useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import '../../../../assets/locales/config'
+import { get } from 'firebase/database';
 
-function Room(){
+function Room() {
     const { roomId } = useParams();
-    const firebaseConfig = {
-        apiKey: "AIzaSyBPqdbyKPq-Ay5J_a2YGwMF-i-m074sBvo",
-        authDomain: "fantqw2gv3.firebaseapp.com",
-        projectId: "fantqw2gv3",
-        storageBucket: "fantqw2gv3.appspot.com",
-        messagingSenderId: "205303446139",
-        appId: "1:205303446139:web:46fcfa5c40e03d454b00de",
-        measurementId: "G-38TSV9FRNG"
-    };
-    
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-    const roomRef = db.collection('rooms').doc(roomId);
-    const roomInfoRef = db.collection('roomsInfo').doc(roomId);
+    // const firebaseConfig = {
+    //     apiKey: "AIzaSyBPqdbyKPq-Ay5J_a2YGwMF-i-m074sBvo",
+    //     authDomain: "fantqw2gv3.firebaseapp.com",
+    //     projectId: "fantqw2gv3",
+    //     storageBucket: "fantqw2gv3.appspot.com",
+    //     messagingSenderId: "205303446139",
+    //     appId: "1:205303446139:web:46fcfa5c40e03d454b00de",
+    //     measurementId: "G-38TSV9FRNG"
+    // };
+
+    // // Initialize Firebase
+    // firebase.initializeApp(firebaseConfig);
+    // const db = firebase.firestore();
+    const roomRef = doc(collection(db, 'rooms'), roomId);
+
     const playerRef = useRef(null);
     const [roomData, setRoomData] = useState([]);
     const [roomInfo, setRoomInfo] = useState([]);
-    const [lock, setLock] = useState(true);
-    const [passInput, setPassInput] = useState('');
     const [showSettings, setShowSettings] = useState(false);
     const [currentUrl, setСurrentUrl] = useState(null);
     const [newUrl, setNewUrl] = useState('');
-    const {t} = useTranslation();
+    const { t } = useTranslation();
+    const navigate = useNavigate();
 
-    useEffect(()=>{
-        getInfo()
-    },[])
+    useEffect(() => {
+        getData();
+    }, [])
 
-    const getData = () =>{
-        roomRef.get().then((doc)=>{
-            if(doc.exists && doc.data()){
+    const getData = () => {
+        getDoc(roomRef).then((doc) => {
+            if (doc.exists && doc.data()) {
                 setRoomData(doc.data());
                 setСurrentUrl(doc.data().url);
+                if (!doc.data().users?.includes(auth.currentUser.uid) && auth.currentUser.uid) {
+                    updateDoc(roomRef, {
+                        users: arrayUnion(auth.currentUser.uid)
+                    })
+                }
             }
-        })
+        }
+        )
     }
 
     useEffect(() => {
         if (roomData.length != 0 && currentUrl) {
-          console.log(roomData);
-          console.log("data", currentUrl);
-          console.log("cur", currentUrl);
-          loadPlayerScript().then(() => {
-            initializePlayer(currentUrl);
-          });
+            loadPlayerScript().then(() => {
+                initializePlayer(currentUrl);
+            });
         }
-      }, [roomData, currentUrl]);
+    }, [roomData, currentUrl]);
 
-    const getInfo = () =>{
-        roomInfoRef.get().then((doc)=>{
-            if(doc.exists){
-                setRoomInfo(doc.data());                
-                if(doc.data().pass){
-                    setLock(true)
-                    const cachedRoomData = localStorage.getItem(`room-${roomId}`);
-                    if (cachedRoomData) {
-                        const { password } = JSON.parse(cachedRoomData);
-                        console.log(password);
-                        if(password || password != ''){
-                            if(btoa(password) === doc.data().pass){
-                                getData()
-                                setLock(false)
-                            }
-                        }
-                    } 
-                } else {
-                    getData()
-                    setLock(false)
-                }
-            }
-        })
-    }
-
-    const checkPass = () =>{
-        console.log(btoa(passInput) + ' inp');
-        console.log(roomInfo.pass + ' inf');
-        if(btoa(passInput) === roomInfo.pass){
-            getData()
-            setLock(false)
-            localStorage.setItem(`room-${roomId}`, JSON.stringify({ password: passInput }));
-        }
-    }
 
     const loadPlayerScript = () => {
         return new Promise((resolve, reject) => {
-          const checkscript = document.querySelector('script[src="../libs/playerjs.js"]');
-          if (checkscript) {
-            // Script is already loaded, resolve immediately
-            resolve();
-            console.log("вже є");
-          } else {
-            console.log("нема");
-            
-            const script = document.createElement('script');
-            script.src = '../libs/playerjs.js';
-            script.type = 'text/javascript';
-            script.onerror = () => reject(new Error('Failed to load the script'));
-            document.body.appendChild(script);
-            console.log("script");
-            script.onload = () => resolve();
-          }
-        });
-      };
+            const checkscript = document.querySelector('script[src="../libs/playerjs.js"]');
+            if (checkscript) {
+                // Script is already loaded, resolve immediately
+                resolve();
+            } else {
 
-    const initializePlayer = (playerurl) =>{
+                const script = document.createElement('script');
+                script.src = '../libs/playerjs.js';
+                script.type = 'text/javascript';
+                script.onerror = () => reject(new Error('Failed to load the script'));
+                document.body.appendChild(script);
+                script.onload = () => resolve();
+            }
+        });
+    };
+
+    const initializePlayer = (playerurl) => {
         if (playerurl) {
             playerRef.current = new Playerjs({ id: 'player', file: playerurl });
-            console.log("inig");
             trackClientSnapshot();
             trackServerSnapshot();
         }
@@ -134,45 +104,39 @@ function Room(){
     }
 
 
-    const trackClientSnapshot = () =>{
+    const trackClientSnapshot = () => {
         var playerElement = document.getElementById('player');
 
         if (playerElement) {
             playerElement.addEventListener("play", () => {
-                console.log('play');
                 var time = playerRef.current.api('time');
-                roomRef.update({
+                updateDoc(roomRef, {
                     play: true,
                     timing: time,
-
                 })
             });
             playerElement.addEventListener("pause", () => {
-                console.log('pause');
                 var time = playerRef.current.api('time');
-                roomRef.update({
+                updateDoc(roomRef, {
                     play: false,
                     timing: time,
                 })
             });
             playerElement.addEventListener("time", () => {
-                // console.log('pause');
                 var time = playerRef.current.api('time');
-                console.log(time);
             });
         }
     }
 
-    const trackServerSnapshot = () =>{
-        roomRef.onSnapshot((doc) =>{
+    const trackServerSnapshot = () => {
+        onSnapshot(roomRef, (doc) => {
             var data = doc.data();
-            data.play ? window.pljssglobal[0].api('play') : window.pljssglobal[0].api('pause'); 
+            data.play ? window.pljssglobal[0].api('play') : window.pljssglobal[0].api('pause');
             var time = playerRef.current.api('time');
-            if(time - 1 >= data.timing || time + 1 <= data.timing){
+            if (time - 1 >= data.timing || time + 1 <= data.timing) {
                 playerRef.current.api('seek', data.timing);
             }
-            console.log(currentUrl, data.url);
-            if(currentUrl && data.url != currentUrl){
+            if (currentUrl && data.url != currentUrl) {
                 // window.location.reload();
             }
         });
@@ -185,75 +149,66 @@ function Room(){
     const changeUrl = () => {
         // e.preventDefault()
         // window.pljssglobal[0].api('file', newUrl);
-        roomRef.update({
+        updateDoc(roomRef, {
             url: newUrl,
+            play: false,
             timing: 0,
         })
     };
 
-    const exitRoom = () =>{
-        roomRef.update({
-            users: firebase.firestore.FieldValue.arrayRemove(user.uid)
+    const exitRoom = () => {
+        updateDoc(roomRef, {
+            users: arrayRemove(auth.currentUser.uid)
         })
-        navigate('/')
+        localStorage.removeItem(`room-${roomId}`);
+        navigate('/home')
     }
 
-    const deleteRoom = () =>{
+    const deleteRoom = () => {
         roomRef.delete();
-        navigate('/')
+        navigate('/home')
     }
 
     return (
-        <m.div 
+        <m.div
             className={classes.room_container}
-            initial={{opacity:animationConfig.main.initialOpacity}}
-            animate={{opacity:animationConfig.main.animateOpacity}}
-            exit={{opacity:animationConfig.main.exitOpacity}}
-            transition={{duration:animationConfig.main.transitionDuration, ease: animationConfig.main.easeEffect}}
+            initial={{ opacity: animationConfig.main.initialOpacity }}
+            animate={{ opacity: animationConfig.main.animateOpacity }}
+            exit={{ opacity: animationConfig.main.exitOpacity }}
+            transition={{ duration: animationConfig.main.transitionDuration, ease: animationConfig.main.easeEffect }}
         >
-            {lock ? (
-                <>
-                    <div>{t("room.password")}</div>
-                    <Input value={passInput} onChange={e => setPassInput(e.target.value)} className={classes.secondary_inpt + ` ${classes.inpt}`}/>
-                    <Button onClick={() => checkPass()} primary={false}>{t("room.checkpassword")}</Button> 
-                </>
-            ) : (
-                <>
-                    <m.div className={classes.player_container} layout transition={animationConfig.move} key='player'>
-                        <div id="player" className={classes.player}></div>
-                    </m.div>
-                    <m.div 
-                        className={classes.room_title}
-                        layout
+            <m.div className={classes.player_container} layout transition={animationConfig.move} key='player'>
+                <div id="player" className={classes.player}></div>
+            </m.div>
+            <m.div
+                className={classes.room_title}
+                layout
+                transition={animationConfig.move}
+                key='roomTitle'
+            >
+                <div>{t('room.room_title')} <span className={classes.room_name}>{roomInfo.name}</span></div>
+                <Button onClick={handleSettingsClick} primary={false}>{t('room.settings')}</Button>
+            </m.div>
+            <AnimatePresence>
+                {showSettings && (
+                    <m.div
+                        className={classes.settings_block}
+                        initial={{ opacity: 0, y: 50 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 50 }}
                         transition={animationConfig.move}
-                        key='roomTitle'
+                        key='settings'
                     >
-                        <div>Кімната: <span className={classes.room_name}>{roomInfo.name}</span></div>
-                        <Button onClick={handleSettingsClick} primary={false}>Налаштування</Button>
+                        <Button onClick={exitRoom} primary={true}>{t('room.exit_btn')}</Button>
+                        <div className={classes.change_url}>
+                            <Input value={newUrl} onChange={e => setNewUrl(e.target.value)} placeholder={t('room.change_url_input')} />
+                            <Button onClick={() => changeUrl(newUrl)} primary={true}>{t('room.change_url_btn')}</Button>
+                        </div>
+                        <Button onClick={deleteRoom} primary={true}>{t('room.delete_btn')}</Button>
                     </m.div>
-                    <AnimatePresence>
-                        {showSettings && (
-                            <m.div 
-                                className={classes.settings_block}
-                                initial={{ opacity: 0, y: 50 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, y: 50 }}
-                                transition={animationConfig.move}
-                                key='settings'
-                            >
-                                <Button onClick={exitRoom} primary={true}>Вийти з кімнати</Button>
-                                <div className={classes.change_url}>
-                                    <Input value={newUrl} onChange={e => setNewUrl(e.target.value)} placeholder={'Новий URL'}/>
-                                    <Button onClick={() => changeUrl(newUrl)} primary={true}>Змінити URL</Button>
-                                </div>
-                                <Button onClick={deleteRoom} primary={true}>Видалити кімнату</Button>
-                            </m.div>
-                        )}
-                    </AnimatePresence>
-                </>
-            )
+                )}
+            </AnimatePresence>
 
-            }
 
         </m.div>
     )

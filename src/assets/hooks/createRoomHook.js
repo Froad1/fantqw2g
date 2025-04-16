@@ -1,42 +1,37 @@
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/firestore';
-import 'firebase/compat/auth';
-import 'firebase/database'
+import { collection, doc, setDoc } from 'firebase/firestore';
+
+
+import { db } from '../firebase';
 
 
 function createRoomHook(url) {
-    const firebaseConfig = {
-        apiKey: "AIzaSyBPqdbyKPq-Ay5J_a2YGwMF-i-m074sBvo",
-        authDomain: "fantqw2gv3.firebaseapp.com",
-        projectId: "fantqw2gv3",
-        storageBucket: "fantqw2gv3.appspot.com",
-        messagingSenderId: "205303446139",
-        appId: "1:205303446139:web:46fcfa5c40e03d454b00de",
-        measurementId: "G-38TSV9FRNG"
-    };
-    
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-    const roomRef = db.collection('rooms').doc();
-    const roomInfoRef = db.collection('roomsInfo').doc(roomRef.id);
 
-    roomRef.set({
+    const roomRef = doc(collection(db, 'rooms'));
+    const roomInfoRef = doc(collection(db, 'roomsInfo'), roomRef.id);
+    const roomData = {
         url: url,
         timing: 0,
         play: false,
-    })
-
-    roomInfoRef.set({
+        users: [],
+    };
+    const roomInfoData = {
         name: url,
-    })
-    .then(() => {
-        console.log("Room created successfully");
-        console.log("Room ID: ", roomRef.id);
-    })
-    .catch((error) => {
-        console.error("Error creating room: ", error);
-    });
+    };
+    setDoc(roomRef, roomData)
+        .then(() => {
+            console.log("Room created successfully");
+            console.log("Room ID: ", roomRef.id);
+        })
+        .catch((error) => {
+            console.error("Error creating room: ", error);
+        });
+    setDoc(roomInfoRef, roomInfoData)
+        .then(() => {
+            console.log("Room info created successfully");
+        })
+        .catch((error) => {
+            console.error("Error creating room info: ", error);
+        });
 
 }
 export default createRoomHook

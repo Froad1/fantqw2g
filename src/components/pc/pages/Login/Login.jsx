@@ -1,7 +1,7 @@
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/firestore';
-import 'firebase/compat/auth';
-import 'firebase/database'
+import { auth, db } from '../../../../assets/firebase';
+import { collection, doc, getDoc} from 'firebase/firestore';
+import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "firebase/auth"
+
 
 import Button from '../../UI/Button/Button';
 import Input from '../../UI/Input/Input';
@@ -13,53 +13,42 @@ import animationConfig from '/public/configs/animationConfig';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import {useTranslation } from 'react-i18next';
+import '../../../../assets/locales/config'
+
 function Login() {
+    const {t} = useTranslation();
     const [login, setLogin] = useState('');
     const [loginError, setLoginError] = useState(null);
     const [password, setPassword] = useState('');
     const [passwordError, setPasswordError] = useState(null);
     const [seePassword, setSeePassword] = useState(false);
-    const [auth, setAuth] = useState(false);
+    const [loginned, setLoginned] = useState(false);
     const navigate = useNavigate();
-
-    const firebaseConfig = {
-        apiKey: "AIzaSyBPqdbyKPq-Ay5J_a2YGwMF-i-m074sBvo",
-        authDomain: "fantqw2gv3.firebaseapp.com",
-        projectId: "fantqw2gv3",
-        storageBucket: "fantqw2gv3.appspot.com",
-        messagingSenderId: "205303446139",
-        appId: "1:205303446139:web:46fcfa5c40e03d454b00de",
-        measurementId: "G-38TSV9FRNG"
-    };
-    
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
 
 
     useEffect(() => {
-        firebase.auth().onAuthStateChanged((user) =>{
-            user && setAuth(true);
-            console.log(user)
+        auth.onAuthStateChanged((user) =>{
+            user && setLoginned(true);
         })
     },[])
 
     useEffect(()=>{
-        if(auth){
+        if(loginned){
             navigate('/')
         }
-    },[auth])
+    },[loginned])
 
     const signInGoogle = () =>{
-        const authProvider = new firebase.auth.GoogleAuthProvider();
-        firebase.auth().signInWithPopup(authProvider)
+        const authProvider = new GoogleAuthProvider();
+        signInWithPopup(auth, authProvider)
           .then((userCredential) => {
-            setAuth(true)
+            setLoginned(true)
           })
           .catch((error) => {
             const errorCode = error.code;
             const errorMessage = error.message;
-            console.log(errorCode, errorMessage)
+            console.error(errorCode, errorMessage)
           });
     }
 
@@ -68,76 +57,51 @@ function Login() {
         setPasswordError('');
         if(login != '' && login && password != '' && password){
             if(!login.includes('@')){
-                const idUsernamesRef = db.collection('usernames').doc('idUsernames')
-                const emailDoc = await idUsernamesRef.get()
+                const idUsernamesRef = doc(collection(db, 'usernames'), 'idUsernames')
+                
+                const emailDoc = await getDoc(idUsernamesRef)
+                if(!emailDoc.exists()){
+                    setLoginError(t('login.errors.email'))
+                    return
+                }
                 const email = emailDoc.data()[login]
 
-                console.log(email);
-
                 if(email && email.email){
-                    firebase.auth().signInWithEmailAndPassword(email.email, password)
+                    signInWithEmailAndPassword(auth, email.email, password)
                     .then((userCredential) => {
-                        setAuth(true)
+                        setLoginned(true)
                     })
                     .catch((error) => {
                         const errorCode = error.code;
                         const errorMessage = error.message;
                         if(errorCode == "auth/invalid-credential"){
-                            setLoginError('Емейл або пароль не правильний')
+                            setLoginError(t('login.errors.email_pass'))
                         }
-                        console.log(errorCode, "BOBOBOB", errorMessage);
+                        console.error(errorCode, errorMessage);
                     });
                 }else{
-                    setLoginError('Такого користувача не існує')
+                    setLoginError(t('login.errors.email'))
                 }
             } else {
-                firebase.auth().signInWithEmailAndPassword(login, password)
+                signInWithEmailAndPassword(auth, login, password)
                 .then((userCredential) => {
-                    setAuth(true)
+                    setLoginned(true)
                 })
                 .catch((error) => {
                     const errorCode = error.code;
                     const errorMessage = error.message;
                     if(errorCode == "auth/invalid-credential"){
-                        setLoginError('Емейл або пароль не правильний')
+                        setLoginError(t('login.errors.email_pass'))
                     }
-                    console.log(errorCode, "BOBOBOB", errorMessage);
+                    console.error(errorCode, errorMessage);
                 });
             }
 
         }else{
-            if(login || login == '') setLoginError('Введіть емейл або логін')
-            if(password || password == '') setPasswordError('Введіть пароль')
+            if(login || login == '') setLoginError(t('login.errors.email_empty'))
+            if(password || password == '') setPasswordError(t('login.errors.password_empty'))
         }
 
-        // if(login != '' && login){       
-        //     setLoginError('');
-        //     var type = 'email'
-        //     if(!login.includes('@')){
-        //         type = 'login'
-        //         setLoginError('Наразі авторизація доступна лише через емейл')
-        //     } else {
-        //         if(password != '' && password){
-        //             setPasswordError('');
-        //             firebase.auth().signInWithEmailAndPassword(login, password)
-        //             .then((userCredential) => {
-        //                 setAuth(true)
-        //             })
-        //             .catch((error) => {
-        //                 const errorCode = error.code;
-        //                 const errorMessage = error.message;
-        //                 if(errorCode == "auth/invalid-credential"){
-        //                     setLoginError('Емейл або пароль не правильний')
-        //                 }
-        //                 console.log(errorCode, "BOBOBOB", errorMessage);
-        //             });
-        //         } else {
-        //             setPasswordError('Введіть пароль')
-        //         }
-        //     }
-        // } else {
-        //     setLoginError('Введіть емейл або логін')
-        // }
     }
 
     return (  
@@ -151,12 +115,12 @@ function Login() {
             <form className={classes.login_form}>
                 <div className={classes.inputs_box}>
                     <div>
-                        <Input placeholder="Емейл або Логін" value={login} onChange={(e)=>{setLogin(e.target.value)}}/>
+                        <Input placeholder={t('login.email_input')} value={login} onChange={(e)=>{setLogin(e.target.value)}}/>
                         <span className={classes.error}>{loginError}</span>
                     </div>
                     <div>
                         <div className={classes.password_box}>
-                            <Input value={password} onChange={(e)=>{setPassword(e.target.value)}} placeholder="Пароль" type={seePassword ? "text" : "password"}/>
+                            <Input value={password} onChange={(e)=>{setPassword(e.target.value)}} placeholder={t('login.password_input')} type={seePassword ? "text" : "password"}/>
                             { seePassword ? (
                                     <svg onClick={()=>{setSeePassword(!seePassword)}} xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"><path d="m644-428-58-58q9-47-27-88t-93-32l-58-58q17-8 34.5-12t37.5-4q75 0 127.5 52.5T660-500q0 20-4 37.5T644-428Zm128 126-58-56q38-29 67.5-63.5T832-500q-50-101-143.5-160.5T480-720q-29 0-57 4t-55 12l-62-62q41-17 84-25.5t90-8.5q151 0 269 83.5T920-500q-23 59-60.5 109.5T772-302Zm20 246L624-222q-35 11-70.5 16.5T480-200q-151 0-269-83.5T40-500q21-53 53-98.5t73-81.5L56-792l56-56 736 736-56 56ZM222-624q-29 26-53 57t-41 67q50 101 143.5 160.5T480-280q20 0 39-2.5t39-5.5l-36-38q-11 3-21 4.5t-21 1.5q-75 0-127.5-52.5T300-500q0-11 1.5-21t4.5-21l-84-82Zm319 93Zm-151 75Z"/></svg>
                                 ):(
@@ -168,7 +132,7 @@ function Login() {
                     </div>
                 </div>
                 <div className={classes.buttons_box}>
-                    <Button  onClick={signInEmail} primary={true}>Увійти</Button>
+                    <Button  onClick={signInEmail} primary={true}>{t('login.login_btn')}</Button>
                     <Button onClick={signInGoogle} primary={false}> 
                         <span>
                         <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="100" height="100" viewBox="0 0 50 50">

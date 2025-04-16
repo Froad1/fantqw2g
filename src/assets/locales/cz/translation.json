@@ -3,8 +3,75 @@
         "main_description": "Dívejte se spolu, i když jste daleko",
         "start_button": "Začít"
     },
-    "settings":{
-        "light_theme": "Světlé",
-        "dark_theme": "Tmavé"
+    "room": {
+        "private": {
+            "title": "Tato místnost je soukromá.",
+            "password_error": "Nesprávné heslo",
+            "password_inpt": "Heslo",
+            "check_btn": "Zkontrolovat"
+        },
+        "room_title": "Místnost: ",
+        "settings": "Nastavení",
+        "exit_btn": "Opustit místnost",
+        "delete_btn": "Smazat místnost",
+        "delete_confirm": {
+            "title": "Opravdu chcete tuto místnost smazat?",
+            "confirm_btn": "Smazat",
+            "cancel_btn": "Zrušit"
+        },
+        "change_url_btn": "Změnit URL",
+        "change_url_input": "Zadejte novou URL"
+    },
+    "home":{
+        "createroom":{
+            "input_url": "Zadejte URL",
+            "checkbox_pass": "Heslo",
+            "input_pass": "Zadejte heslo",
+            "button": "Vytvořit místnost"
+        },
+        "connectroom":{
+            "input_id": "Zadejte ID místnosti",
+            "button": "Připojit se"
+        }
+    },
+    "header":{
+        "account":{
+            "signout": "Odhlásit se"
+        },
+        "settings":{
+            "light_theme": "Světlý",
+            "dark_theme": "Tmavý"
+        },
+        "login_btn":{
+            "login": "Přihlásit se",
+            "register": "Registrovat se"
+        }
+    },
+    "login": {
+        "errors": {
+            "email": "Neplatný e-mail nebo uživatelské jméno",
+            "password": "Neplatné heslo",
+            "email_pass": "Neplatný e-mail nebo heslo",
+            "email_empty": "E-mail nebo uživatelské jméno nesmí být prázdné",
+            "password_empty": "Heslo nesmí být prázdné"
+        },
+        "email_input": "E-mail nebo uživatelské jméno",
+        "password_input": "Heslo",
+        "login_btn": "Přihlásit se"
+    },
+    "register": {
+        "errors": {
+            "username_empty": "Uživatelské jméno nesmí být prázdné",
+            "username_invalid": "Uživatelské jméno musí mít 3–20 znaků a může obsahovat pouze písmena, číslice a podtržítka",
+            "username_taken": "Uživatelské jméno je již obsazeno",
+            "email_empty": "E-mail nesmí být prázdný",
+            "email_invalid": "E-mail musí být platná e-mailová adresa",
+            "password_empty": "Heslo nesmí být prázdné",
+            "password_invalid": "Heslo musí mít alespoň 6 znaků"
+        },
+        "username_input": "Uživatelské jméno",
+        "email_input": "E-mail",
+        "password_input": "Heslo",
+        "register_btn": "Registrovat se"
     }
 }

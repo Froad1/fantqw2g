@@ -9,6 +9,12 @@
   animation: gradient-move 15s ease-in-out infinite;
 }
 
+.error{
+    color: brown;
+    font-size: 0.8rem;
+    font-family: eUkraineThin;
+}
+
 @keyframes gradient-move {
 	0% {
 		background-position: 0% 50%;

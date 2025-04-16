@@ -7,51 +7,36 @@ import animationConfig from '/public/configs/animationConfig';
 import { AnimatePresence, motion as m } from 'framer-motion'
 import { useEffect, useState } from 'react';
 
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/firestore';
-import 'firebase/compat/auth';
-import 'firebase/database'
 
 import {useTranslation } from 'react-i18next';
 import '../../../../assets/locales/config'
 import i18next from 'i18next';
 import Flag from 'react-world-flags';
 
+import { auth } from '../../../../assets/firebase';
+
 
 const Header = () =>{
-    const firebaseConfig = {
-        apiKey: "AIzaSyBPqdbyKPq-Ay5J_a2YGwMF-i-m074sBvo",
-        authDomain: "fantqw2gv3.firebaseapp.com",
-        projectId: "fantqw2gv3",
-        storageBucket: "fantqw2gv3.appspot.com",
-        messagingSenderId: "205303446139",
-        appId: "1:205303446139:web:46fcfa5c40e03d454b00de",
-        measurementId: "G-38TSV9FRNG"
-    };
-    
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
     const {t} = useTranslation();
     const navigate = useNavigate()
-    const [auth, setAuth] = useState(null);
+    const [loggined, setLoggined] = useState(null);
     const [user, setUser] = useState(null);
     const [isLight, setIsLight] = useState(false);
     const [accountDropdown, setAccountDropdown] = useState(false);
     const [settingsDropdown, setSettingsDropdown] = useState(false);
     const [languageDropdown, setLanguageDropdown] = useState(false);
-    const [selectedLanguage, setSelectedLanguage] = useState('ua');
+    const [selectedLanguage, setSelectedLanguage] = useState('en');
 
     useEffect(()=>{
-        firebase.auth().onAuthStateChanged((user) =>{
-            if(user){
-                setAuth(true);
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                setLoggined(true);
                 setUser(user);
+            } else {
+                setLoggined(false);
+                setUser(null);
             }
-            else{
-                setAuth(false)
-            }
-        })
+        });                
     },[])
 
     const navigateLogin = () => {
@@ -62,7 +47,14 @@ const Header = () =>{
     }
 
     const signOut = () =>{
-        firebase.auth().signOut()
+        auth.signOut().then(() => {
+            setLoggined(false);
+            setUser(null);
+            navigate('/');
+        }
+        ).catch((error) => {
+            console.error('Error signing out:', error);
+        });
     }
 
     const changeMode = () => {
@@ -96,7 +88,7 @@ const Header = () =>{
             transition={{ duration: animationConfig.main.transitionDuration, ease: animationConfig.main.easeEffect }}
         >
             <Link to='/' className={classes.logo}>fantqw2g</Link>
-            {!auth ?
+            {!loggined ?
                 (
                     <div className={classes.buttons_autorization}>
                         <Button onClick={navigateLogin} primary={false}>SignIn</Button>
@@ -122,7 +114,7 @@ const Header = () =>{
                                     exit={{ opacity: 0, y: -50 }}
                                     transition={animationConfig.move} 
                                 >
-                                    <Button primary={false} onClick={signOut}>Вийти</Button>
+                                    <Button primary={false} onClick={signOut}>{t("header.account.signout")}</Button>
                                 </m.div>
                             )}
                         </AnimatePresence>
@@ -190,7 +182,7 @@ const Header = () =>{
                                             <m.svg layout transition={animationConfig.move} xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"><path d="M480-360q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35Zm0 80q-83 0-141.5-58.5T280-480q0-83 58.5-141.5T480-680q83 0 141.5 58.5T680-480q0 83-58.5 141.5T480-280ZM200-440H40v-80h160v80Zm720 0H760v-80h160v80ZM440-760v-160h80v160h-80Zm0 720v-160h80v160h-80ZM256-650l-101-97 57-59 96 100-52 56Zm492 496-97-101 53-55 101 97-57 59Zm-98-550 97-101 59 57-100 96-56-52ZM154-212l101-97 55 53-97 101-59-57Zm326-268Z"/></m.svg>
 
                                         )} 
-                                        {isLight ? t('settings.dark_theme') : t('settings.light_theme')}
+                                        {isLight ? t('header.settings.dark_theme') : t('header.settings.light_theme')}
                                     </Button>
                                 </m.div>
                             )}

@@ -3,13 +3,24 @@
         "main_description": "Watch Together, Even If You're Far Away",
         "start_button": "Start"
     },
-    "settings":{
-        "light_theme": "Light",
-        "dark_theme": "Dark"
-    },
     "room":{
-        "password": "Enter Password",
-        "checkpassword": "Check"
+        "private": {
+            "title": "This room is private.",
+            "password_error": "Incorrect Password",
+            "password_inpt": "Password",
+            "check_btn": "Check"
+        },
+        "room_title": "Room: ",
+        "settings": "Settings",
+        "exit_btn": "Exit Room",
+        "delete_btn": "Delete Room",
+        "delete_confirm": {
+            "title": "Are you sure you want to delete this room?",
+            "confirm_btn": "Delete",
+            "cancel_btn": "Cancel"
+        },
+        "change_url_btn": "Change URL",
+        "change_url_input": "Enter new URL"
     },
     "home":{
         "createroom":{
@@ -22,5 +33,45 @@
             "input_id": "Enter Room ID",
             "button": "Connect"
         }
+    },
+    "header":{
+        "account":{
+            "signout": "Sign Out"
+        },
+        "settings":{
+            "light_theme": "Light",
+            "dark_theme": "Dark"
+        },
+        "login_btn":{
+            "login": "Login",
+            "register": "Register"
+        }
+    },
+    "login":{
+        "errors": {
+            "email": "Invalid email or username",
+            "password": "Invalid password",
+            "email_pass": "Invalid email or password",
+            "email_empty": "Email or username cannot be empty",
+            "password_empty": "Password cannot be empty"
+        },
+        "email_input": "Email or Username",
+        "password_input": "Password",
+        "login_btn": "Login"
+    },
+    "register":{
+        "errors": {
+            "username_empty": "Username cannot be empty",
+            "username_invalid": "Username must be 3-20 characters long and can only contain letters, numbers, and underscores",
+            "username_taken": "Username is already taken",
+            "email_empty": "Email cannot be empty",
+            "email_invalid": "Email must be a valid",
+            "password_empty": "Password cannot be empty",
+            "password_invalid": "Password must be at least 6 characters long"
+        },
+        "username_input": "Username",
+        "email_input": "Email",
+        "password_input": "Password",
+        "register_btn": "Register"
     }
 }
